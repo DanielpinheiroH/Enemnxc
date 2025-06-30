@@ -1,0 +1,25 @@
+{
+  "questoes": [
+    {
+      "enunciado": "Leia o texto abaixo:\n\n“Escrever é um ato de coragem, uma tentativa de organizar o caos das ideias e dar forma aos pensamentos mais profundos. Muitas vezes, a produção textual é um reflexo do que vivemos e do que observamos no mundo à nossa volta. Nesse processo, O escritor precisa escolher suas palavras com cuidado, buscando sempre a clareza e a autenticidade.”\n\nBaseado no texto, analise as afirmativas abaixo e marque a correta:",
+      "alternativas": {
+        "a": "O texto apresenta uma descrição técnica sobre a produção textual, destacando exclusivamente a clareza como principal objetivo.",
+        "b": "A expressão \"organizar o caos das ideias\" indica que a escrita é um processo mecânico e simples, que não demanda esforço ou criatividade.",
+        "c": "O texto argumenta que a escrita é tanto um ato subjetivo, baseado nas vivências do autor, quanto um processo que exige reflexão e escolhas conscientes.",
+        "d": "O autor do texto sugere que a produção textual não está conectada ao mundo exterior, mas sim ao universo interno de quem escreve."
+      },
+      "resposta": "c"
+    },
+    {
+      "enunciado": "Algumas palavras sofrem, ou não, alterações mediante a relação com o núcleo dos sintagmas a que se referem. Marque a alternativa em desacordo com tal afirmativa:",
+      "alternativas": {
+        "a": "Bastantes alunos atingiram a meta.",
+        "b": "Os professores ficaram bastante satisfeitos com o resultado dos alunos.",
+        "c": "Ela mesma elaborou o texto.",
+        "d": "A produção textual foi mesma feita.",
+        "e": "As mestras estão meio cansadas."
+      },
+      "resposta": "d"
+    }
+  ]
+}

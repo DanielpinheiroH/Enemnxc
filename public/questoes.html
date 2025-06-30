@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>ENEMNXC - Questões</title>
+</head>
+<body>
+
+  <!-- 🔽 Aqui está o seletor de assunto -->
+  <h2>ENEMNXC - As questões da sua aprovação!</h2>
+  Filtrar questões por matéria: <br>
+  <select id="filtro-assunto">
+    <option value="">Todos as matérias</option>
+    <option value="Redação">Redação</option>
+    <option value="Língua Portuguesa">Língua Portuguesa</option>
+    <!-- Adicione mais opções se quiser -->
+  </select>
+  <button onclick="carregarQuestoes()">Filtrar</button>
+
+  <hr />
+
+  <!-- 🔽 Aqui serão exibidas as questões filtradas -->
+  <div id="questoes-container"></div>
+
+  <!-- 🔽 Script para buscar do backend -->
+  <script>
+    async function carregarQuestoes() {
+      const assunto = document.getElementById("filtro-assunto").value;
+      const url = assunto
+        ? `http://localhost:8000/questoes?assunto=${encodeURIComponent(assunto)}`
+        : `http://localhost:8000/questoes`;
+
+      const res = await fetch(url);
+      const questoes = await res.json();
+
+      const container = document.getElementById("questoes-container");
+      container.innerHTML = "";
+
+      questoes.forEach(q => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <strong>${q.enunciado}</strong><br />
+          ${q.alternativas.map(a => `<p>${a.letra}) ${a.texto}</p>`).join("")}
+          <hr />
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
+
+</body>
+</html>

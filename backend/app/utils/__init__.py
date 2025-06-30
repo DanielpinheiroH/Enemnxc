@@ -1,0 +1,1 @@
+# Indica que a pasta 'utils' é um pacote Python
