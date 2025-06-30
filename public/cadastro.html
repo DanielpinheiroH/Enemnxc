@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ENEMNXC - Cadastro</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #0d0d0d;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #000000, #1a1a1a);
+      padding: 20px;
+    }
+
+    .form-container {
+      background: #1a1a1a;
+      padding: 40px 30px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 0 20px rgba(74, 20, 140, 0.6);
+      border: 1px solid #4a148c;
+      transition: transform 0.3s ease;
+    }
+
+    .form-container:hover {
+      transform: scale(1.01);
+    }
+
+    h1 {
+      text-align: center;
+      color: #c084fc;
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #e0e0e0;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: none;
+      background-color: #2a2a2a;
+      color: #fff;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: 2px solid #4a148c;
+      background-color: #333;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4a148c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #6a1b9a;
+    }
+
+    .extra {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .extra a {
+      color: #c084fc;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .extra a:hover {
+      color: #ffffff;
+    }
+
+    .error {
+      color: #ff6b6b;
+      font-size: 13px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      .form-container {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>📝 CADASTRE-SE</h1>
+    <form id="cadastroForm">
+      <label for="nome">Nome completo</label>
+      <input type="text" id="nome" name="nome" placeholder="Seu nome" required />
+
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" placeholder="seu@email.com" required />
+
+      <label for="senha">Senha</label>
+      <input type="password" id="senha" name="senha" placeholder="Crie uma senha" required />
+
+      <div class="error" id="erroCadastro" style="display: none;">
+        Erro ao cadastrar. Tente outro e-mail.
+      </div>
+
+      <button type="submit">Criar Conta</button>
+    </form>
+
+    <div class="extra">
+      Já tem conta? <a href="login.html">Faça login</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('cadastroForm');
+    const erroCadastro = document.getElementById('erroCadastro');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nome = form.nome.value;
+      const email = form.email.value;
+      const senha = form.senha.value;
+
+      const res = await fetch('http://127.0.0.1:8000/auth/cadastro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, senha }),
+      });
+
+      if (res.ok) {
+        alert("Cadastro realizado com sucesso!");
+        window.location.href = "login.html";
+      } else {
+        erroCadastro.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

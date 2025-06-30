@@ -1,96 +1,164 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Redações Corrigidas - ENEMNXC</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ENEMNXC - Redações</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 800px;
+      padding-top: 60px;
+      max-width: 9000px;
       margin: auto;
-      padding: 30px;
-      padding-bottom: 80px;
+      background-color:#111;
     }
 
     h1 {
       color: #4a148c;
+      text-align: center;
     }
 
-    .redacao {
-      background: #f4f4f4;
-      padding: 15px;
-      border-left: 5px solid #4a148c;
-      margin-bottom: 20px;
-      border-radius: 8px;
-    }
-
-    .redacao h3 {
-      margin-bottom: 5px;
-    }
-
-    footer {
+    .navbar {
       position: fixed;
-      bottom: 0;
+      top: 0;
       width: 100%;
-      background: #f8f9fa;
+      background: #111;
       padding: 12px 0;
       display: flex;
       justify-content: space-around;
-      border-top: 1px solid #ccc;
-      font-family: Arial, sans-serif;
+      border-bottom: 2px solid #4a148c;
       font-size: 14px;
-      z-index: 100;
+      z-index: 1000;
     }
 
-    footer a {
+    .navbar a {
       text-decoration: none;
+      color: #ccc;
+    }
+
+    .navbar a.active {
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .tema {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-left: 5px solid #4a148c;
+    }
+
+    .tema h3 {
+      margin-top: 0;
+      color: #4a148c;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
       color: #333;
+    }
+
+    input[type="file"] {
+      margin: 10px 0;
+    }
+
+    button {
+      background-color: #4a148c;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #6a1cb3;
+    }
+
+    .resposta {
+      margin-top: 15px;
+      background: #eee;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>📝 Minhas Redações Corrigidas</h1>
-  <div id="historico"></div>
 
-  <footer>
-    <a href="index.html">🏠 Home</a>
+  <div class="navbar">
+    <a href="home.html">🏠 Início</a>
     <a href="questoes.html">❓ Questões</a>
-    <a href="simulados.html">🧪 Simulados</a>
+    <a href="simulados.html">📝 Simulados</a>
+    <a href="redacoes.html" class="active">✍️ Redações</a>
     <a href="dashboard.html">📊 Dashboard</a>
-    <a href="redacoes.html">📝 Redações</a>
     <a href="perfil.html">👤 Perfil</a>
-  </footer>
+  </div>
+
+  <h1>✍️ Temas de Redação</h1>
+
+  <div class="tema">
+    <h3>1. Desafios da inclusão digital no Brasil</h3>
+    <label for="file-1">Escolher imagem da redação:</label>
+    <input type="file" id="file-1" accept="image/*" title="Escolher imagem da redação" onchange="corrigirRedacao(this, 1)" />
+    <button onclick="corrigirRedacaoPorBotao(1)">Enviar para correção</button>
+    <div class="resposta" id="resposta-1"></div>
+  </div>
+
+  <div class="tema">
+    <h3>2. O impacto das redes sociais nas relações humanas</h3>
+    <label for="file-2">Escolher imagem da redação:</label>
+    <input type="file" id="file-2" accept="image/*" title="Escolher imagem da redação" onchange="corrigirRedacao(this, 2)" />
+    <button onclick="corrigirRedacaoPorBotao(2)">Enviar para correção</button>
+    <div class="resposta" id="resposta-2"></div>
+  </div>
+
+  <div class="tema">
+    <h3>3. Caminhos para combater a violência contra a mulher no Brasil</h3>
+    <label for="file-3">Escolher imagem da redação:</label>
+    <input type="file" id="file-3" accept="image/*" title="Escolher imagem da redação" onchange="corrigirRedacao(this, 3)" />
+    <button onclick="corrigirRedacaoPorBotao(3)">Enviar para correção</button>
+    <div class="resposta" id="resposta-3"></div>
+  </div>
 
   <script>
-    const email = localStorage.getItem("email") || "daniel@nxc.com";
-
-    async function carregarRedacoes() {
-      const resp = await fetch("/api/redacoes?email=" + email);
-      const redacoes = await resp.json();
-
-      const container = document.getElementById("historico");
-
-      if (redacoes.length === 0) {
-        container.innerHTML = "<p>Nenhuma redação corrigida ainda.</p>";
+    function corrigirRedacao(input, id) {
+      const respostaDiv = document.getElementById("resposta-" + id);
+      if (input.files.length === 0) {
+        respostaDiv.innerText = "Nenhum arquivo selecionado.";
+        respostaDiv.style.display = "block";
         return;
       }
 
-      redacoes.forEach((r, i) => {
-        const div = document.createElement("div");
-        div.className = "redacao";
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append("imagem", file);
 
-        div.innerHTML = `
-          <h3>Redação ${i + 1} - Nota: ${r.nota}</h3>
-          <p><strong>Data:</strong> ${r.data}</p>
-          <p><strong>Texto:</strong></p>
-          <p>${r.texto}</p>
-        `;
+      respostaDiv.innerText = "Enviando para correção...";
+      respostaDiv.style.display = "block";
 
-        container.appendChild(div);
+      fetch("http://127.0.0.1:8000/api/corrigir-redacao", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        respostaDiv.innerText = data.resultado || "Correção recebida.";
+      })
+      .catch(err => {
+        respostaDiv.innerText = "Erro ao corrigir: " + err.message;
       });
     }
 
-    carregarRedacoes();
+    function corrigirRedacaoPorBotao(id) {
+      const input = document.getElementById("file-" + id);
+      corrigirRedacao(input, id);
+    }
   </script>
 </body>
 </html>

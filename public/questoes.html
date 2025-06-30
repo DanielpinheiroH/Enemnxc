@@ -2,51 +2,137 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ENEMNXC - Questões</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      padding: 20px;
+      padding-top: 100px; /* espaço para o rodapé fixo no topo */
+      max-width: 9000px;
+      margin: auto;
+    }
+
+    h1 {
+      color: #a259ff;
+      text-align: center;
+    }
+
+    .filtro-container {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    label {
+      font-weight: bold;
+      margin-right: 10px;
+      color: #ccc;
+    }
+
+    select {
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: 1px solid #a259ff;
+      background-color: #111;
+      color: #fff;
+    }
+
+    .questao {
+      background-color: #111;
+      border: 1px solid #a259ff;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 10px;
+    }
+
+    .alternativa {
+      border: 1px solid #444;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: #222;
+      transition: 0.2s;
+    }
+
+    .alternativa:hover {
+      background-color: #333;
+    }
+
+    .correta {
+      background-color: #155724;
+      border-color: #28a745;
+      color: #d4edda;
+    }
+
+    .errada {
+      background-color: #721c24;
+      border-color: #dc3545;
+      color: #f8d7da;
+    }
+
+    footer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #1a1a1a;
+      padding: 12px 0;
+      display: flex;
+      justify-content: space-around;
+      border-bottom: 1px solid #333;
+      font-size: 14px;
+      z-index: 1000;
+    }
+
+    footer a {
+      text-decoration: none;
+      color: #ccc;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    footer a.active,
+    footer a:hover {
+      color: #a259ff;
+      font-weight: bold;
+      background-color: #000;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- 🔽 Aqui está o seletor de assunto -->
-  <h2>ENEMNXC - As questões da sua aprovação!</h2>
-  Filtrar questões por matéria: <br>
-  <select id="filtro-assunto">
-    <option value="">Todos as matérias</option>
-    <option value="Redação">Redação</option>
-    <option value="Língua Portuguesa">Língua Portuguesa</option>
-    <!-- Adicione mais opções se quiser -->
-  </select>
-  <button onclick="carregarQuestoes()">Filtrar</button>
+  <footer>
+    <a href="home.html">🏠 Home</a>
+    <a href="questoes.html" class="active">❓ Questões</a>
+    <a href="simulados.html">🧪 Simulados</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="redacoes.html">📝 Redações</a>
+    <a href="perfil.html">👤 Perfil</a>
+  </footer>
 
-  <hr />
+  <h1>❓ Questões</h1>
 
-  <!-- 🔽 Aqui serão exibidas as questões filtradas -->
-  <div id="questoes-container"></div>
+  <div class="filtro-container">
+    <label for="filtro-assunto">Filtrar por assunto:</label>
+    <select id="filtro-assunto" onchange="carregarQuestoes()">
+      <option value="">Todos</option>
+      <option value="portugues">Língua Portuguesa</option>
+      <option value="literatura">Literatura</option>
+      <option value="ingles">Inglês</option>
+      <option value="espanhol">Espanhol</option>
+      <option value="educacao-fisica">Educação Física</option>
+      <option value="historia">História</option>
+      <option value="geografia">Geografia</option>
+      <option value="artes">Artes</option>
+      <option value="tecnologia">Tecnologia da Informação</option>
+    </select>
+  </div>
 
-  <!-- 🔽 Script para buscar do backend -->
-  <script>
-    async function carregarQuestoes() {
-      const assunto = document.getElementById("filtro-assunto").value;
-      const url = assunto
-        ? `http://localhost:8000/questoes?assunto=${encodeURIComponent(assunto)}`
-        : `http://localhost:8000/questoes`;
+  <div id="questoes"></div>
 
-      const res = await fetch(url);
-      const questoes = await res.json();
-
-      const container = document.getElementById("questoes-container");
-      container.innerHTML = "";
-
-      questoes.forEach(q => {
-        const div = document.createElement("div");
-        div.innerHTML = `
-          <strong>${q.enunciado}</strong><br />
-          ${q.alternativas.map(a => `<p>${a.letra}) ${a.texto}</p>`).join("")}
-          <hr />
-        `;
-        container.appendChild(div);
-      });
-    }
-  </script>
-
+  <script src="scripts/questoes.js"></script>
 </body>
 </html>

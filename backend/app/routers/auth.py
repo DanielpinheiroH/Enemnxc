@@ -1,52 +1,48 @@
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, EmailStr
-from app.utils.auth import *
-from app.fake_db import users_db
+from passlib.context import CryptContext
 
 router = APIRouter()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+# ⚙️ MODELOS
 class UserCreate(BaseModel):
-    name: str
     email: EmailStr
     password: str
 
-class Login(BaseModel):
+class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+# ⚙️ MOCK DATABASE (substitua pelo banco real depois)
+fake_users_db = {}
+
+# 🔒 Funções auxiliares
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+# 📥 REGISTRO
 @router.post("/register")
 def register(user: UserCreate):
-    if user.email in users_db:
-        raise HTTPException(status_code=400, detail="E-mail já cadastrado.")
-    users_db[user.email] = {
-        "name": user.name,
-        "email": user.email,
-        "hashed_password": hash_password(user.password)
-    }
-    return {"msg": "Usuário registrado com sucesso."}
+    if user.email in fake_users_db:
+        raise HTTPException(status_code=400, detail="E-mail já registrado.")
 
+    hashed_pwd = hash_password(user.password)
+    fake_users_db[user.email] = {"email": user.email, "hashed_password": hashed_pwd}
+
+    return {"msg": "Usuário registrado com sucesso!"}
+
+# 🔐 LOGIN
 @router.post("/login")
-def login(data: Login):
-    user = users_db.get(data.email)
-    if not user or not verify_password(data.password, user["hashed_password"]):
-        raise HTTPException(status_code=401, detail="Credenciais inválidas.")
-    token = create_access_token({"sub": user["email"]})
-    return {"access_token": token, "token_type": "bearer"}
+def login(user: UserLogin):
+    db_user = fake_users_db.get(user.email)
+    if not db_user:
+        raise HTTPException(status_code=400, detail="E-mail não encontrado.")
 
-def get_current_user(request: Request):
-    token = request.headers.get("Authorization", "").replace("Bearer ", "")
-    if not token:
-        raise HTTPException(status_code=401, detail="Token ausente")
-    try:
-        payload = decode_token(token)
-        email = payload.get("sub")
-        user = users_db.get(email)
-        if not user:
-            raise HTTPException(status_code=404, detail="Usuário não encontrado")
-        return user
-    except JWTError:
-        raise HTTPException(status_code=403, detail="Token inválido")
+    if not verify_password(user.password, db_user["hashed_password"]):
+        raise HTTPException(status_code=401, detail="Senha incorreta.")
 
-@router.get("/me")
-def me(user=Depends(get_current_user)):
-    return {"name": user["name"], "email": user["email"]}
+    return {"msg": "Login realizado com sucesso!"}
