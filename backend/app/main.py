@@ -5,9 +5,9 @@ from models import SessionLocal, Questao
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-from routers import historico
-from routers import auth, questao
 
+# Corrigir importações
+from routers import historico, auth, questao, simulados
 
 # Carregar variáveis de ambiente
 load_dotenv()
@@ -30,6 +30,7 @@ app.add_middleware(
 app.include_router(historico.router)
 app.include_router(auth.router, prefix="/auth")
 app.include_router(questao.router, prefix="/questoes")
+app.include_router(simulados.router)
 
 # Rota para buscar todas as questões
 @app.get("/questoes")
