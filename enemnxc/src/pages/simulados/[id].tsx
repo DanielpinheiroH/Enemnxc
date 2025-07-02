@@ -24,16 +24,19 @@ export default function SimuladoPage() {
   const [respostas, setRespostas] = useState<Record<number, string>>({});
   const [carregando, setCarregando] = useState(true);
 
-  useEffect(() => {
-    if (id) {
-      fetch(`http://localhost:8000/simulados/${id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setQuestoes(data);
-          setCarregando(false);
-        });
-    }
-  }, [id]);
+useEffect(() => {
+  if (id) {
+    setCarregando(true);
+    fetch(`http://localhost:8000/simulados/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("QUESTÕES:", data); // ← só para garantir que é um array
+        setQuestoes(data);
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setCarregando(false));
+  }
+}, [id]);
 
   const marcarResposta = (idQuestao: number, letra: string) => {
     setRespostas((prev) => ({ ...prev, [idQuestao]: letra }));
@@ -61,6 +64,9 @@ export default function SimuladoPage() {
     router.push(`/simulados/resultado?id=${id}`);
   };
 
+  const todasRespondidas = questoes.length > 0 && questoes.every((q) => respostas[q.id]);
+
+ 
   return (
     <>
       <Head>
@@ -107,9 +113,13 @@ export default function SimuladoPage() {
                 </div>
               ))}
 
-              <button className="botao" onClick={finalizarSimulado}>
-                Finalizar Simulado
-              </button>
+              <button
+  className="botao"
+  onClick={finalizarSimulado}
+  disabled={!todasRespondidas}
+>
+  Finalizar Simulado
+</button>
             </>
           )}
         </div>
@@ -214,6 +224,12 @@ export default function SimuladoPage() {
         .botao:hover {
           background-color: #7b1fa2;
         }
+  .botao:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
       `}</style>
     </>
   );

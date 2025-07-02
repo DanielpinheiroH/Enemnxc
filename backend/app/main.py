@@ -5,7 +5,7 @@ from models import SessionLocal, Questao
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-
+from routers import simulados
 # Corrigir importações
 from routers import historico, auth, questao, simulados
 
