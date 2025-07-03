@@ -11,18 +11,23 @@ const temas = [
 ];
 
 export default function RedacoesPage() {
-  const [imagem, setImagem] = useState<File | null>(null);
-  const [temaSelecionado, setTemaSelecionado] = useState<string>("");
+  const [redacoes, setRedacoes] = useState<{ [tema: string]: File | null }>({});
+  const [erros, setErros] = useState<{ [tema: string]: boolean }>({});
 
-  const enviarRedacao = () => {
-    if (!imagem || !temaSelecionado) {
-      alert("Selecione um tema e uma imagem!");
+  const handleArquivoChange = (tema: string, file: File | null) => {
+    setRedacoes({ ...redacoes, [tema]: file });
+    setErros({ ...erros, [tema]: false });
+  };
+
+  const enviarRedacao = (tema: string) => {
+    const imagem = redacoes[tema];
+    if (!imagem) {
+      setErros({ ...erros, [tema]: true });
       return;
     }
 
-    // Aqui entraria a chamada à API
-    console.log("Enviando redação para correção...", { temaSelecionado, imagem });
-    alert("Redação enviada com sucesso (simulação)!");
+    console.log("Enviando redação...", { tema, imagem });
+    alert(`Redação do tema "${tema}" enviada com sucesso (simulação)!`);
   };
 
   return (
@@ -41,40 +46,46 @@ export default function RedacoesPage() {
       </div>
 
       <main className="container">
-        <div className="caixa">
-          <h1>✍️ Envio de Redações</h1>
-          <p>Escolha um tema e envie sua redação (em imagem) para correção automática.</p>
+        <h1 className="tituloPagina">Correção Inteligente de Redações ENEM</h1>
 
-          <div className="temas">
-            {temas.map((tema, idx) => (
-              <div
-                key={idx}
-                className={`tema ${temaSelecionado === tema ? "ativo" : ""}`}
-                onClick={() => setTemaSelecionado(tema)}
-              >
-                {tema}
-              </div>
-            ))}
+        {temas.map((tema, idx) => (
+          <div className="caixaTema" key={idx}>
+            <h3 className="temaTitulo">{tema}</h3>
+
+            <div className="botoes">
+              <label htmlFor={`arquivo-${idx}`} className="botaoAnexar">
+                📎 Anexar Imagem
+              </label>
+              <input
+                id={`arquivo-${idx}`}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => handleArquivoChange(tema, e.target.files?.[0] || null)}
+              />
+
+              <button className="botaoEnviar" onClick={() => enviarRedacao(tema)}>
+                Enviar Redação
+              </button>
+            </div>
+
+            {erros[tema] && <p className="erro">Nenhum arquivo selecionado.</p>}
           </div>
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setImagem(e.target.files?.[0] || null)}
-          />
-
-          <button className="botao" onClick={enviarRedacao}>
-            Enviar Redação
-          </button>
-        </div>
+        ))}
       </main>
 
-      <style jsx>{`
-        body {
-          background-color: #000;
-          color: #fff;
-        }
 
+      <style global jsx>{`
+        html, body {
+          margin: 0;
+          padding: 0;
+          background-color: #121212;
+          color: #fff;
+          font-family: Arial, sans-serif;
+          height: 100%;
+        }
+      `}</style>
+      <style jsx>{`
         .navbar {
           position: fixed;
           top: 0;
@@ -101,73 +112,85 @@ export default function RedacoesPage() {
         }
 
         .container {
-          padding-top: 80px;
-          max-width: 1000px;
+          padding-top: 100px;
+          max-width: 800px;
           margin: auto;
           display: flex;
-          justify-content: center;
+          flex-direction: column;
+          gap: 32px;
         }
 
-        .caixa {
-          background-color: #fff;
-          color: #000;
-          padding: 40px;
-          border-radius: 16px;
-          border: 3px solid #bb86fc;
-          width: 100%;
-        }
-
-        .caixa h1 {
+        .tituloPagina {
+          font-size: 28px;
           text-align: center;
-          font-size: 32px;
-          color: #4a148c;
-          margin-bottom: 20px;
+          color: #bb86fc;
+          font-weight: bold;
+          margin-bottom: 8px;
+          text-shadow: 0px 0px 6px #4a148c;
         }
 
-        .temas {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-          margin-bottom: 20px;
-        }
-
-        .tema {
-          background: #f2f2f2;
-          padding: 16px;
+        .caixaTema {
+          background: #fff;
+          color: #000;
+          padding: 24px;
           border-radius: 12px;
-          border: 2px solid transparent;
-          cursor: pointer;
-          transition: 0.2s;
+          border: 2px solid #bb86fc;
         }
 
-        .tema:hover {
-          border-color: #4a148c;
-        }
-
-        .tema.ativo {
-          border-color: #bb86fc;
-          background: #e0d7f9;
-        }
-
-        input[type="file"] {
-          margin-top: 10px;
+        .temaTitulo {
+          font-size: 20px;
+          color: #4a148c;
+          text-align: center;
           margin-bottom: 20px;
+          font-weight: 600;
+          border-bottom: 1px dashed #bb86fc;
+          padding-bottom: 8px;
         }
 
-        .botao {
+        .botoes {
+          display: flex;
+          justify-content: center;
+          gap: 16px;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+
+        .botaoAnexar {
+          display: inline-block;
+          background-color: #bb86fc;
+          color: #fff;
+          padding: 10px 20px;
+          font-size: 14px;
+          font-weight: bold;
+          border: 2px solid #4a148c;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+
+        .botaoAnexar:hover {
+          background-color: #9b5de5;
+        }
+
+        .botaoEnviar {
           background-color: #4a148c;
           color: white;
-          padding: 12px 24px;
-          font-size: 16px;
+          padding: 10px 20px;
+          font-size: 14px;
           border: none;
           border-radius: 8px;
           cursor: pointer;
-          display: block;
-          margin: 0 auto;
         }
 
-        .botao:hover {
+        .botaoEnviar:hover {
           background-color: #7b1fa2;
+        }
+
+        .erro {
+          color: red;
+          font-size: 13px;
+          text-align: center;
+          margin-top: 10px;
         }
       `}</style>
     </>
