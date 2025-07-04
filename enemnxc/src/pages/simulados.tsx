@@ -1,12 +1,51 @@
 import Head from "next/head";
 import Link from "next/link";
+import { GetServerSideProps } from "next";
+import nookies from "nookies";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+interface Questao {
+  id: number;
+  enunciado: string;
+  gabarito: string;
+  assunto: string;
+  alternativas: {
+    letra: string;
+    texto: string;
+  }[];
+}
+
+interface Simulado {
+  id: number;
+  titulo: string;
+  descricao?: string;
+  questoes: Questao[];
+}
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { token } = nookies.get(ctx);
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: {} };
+};
 
 export default function Simulados() {
-  const simulados = Array.from({ length: 35 }, (_, i) => ({
-    id: i + 1,
-    titulo: `Simulado ${i + 1}`,
-    descricao: `Conjunto de questões do ENEM - ${i + 1}/35`,
-  }));
+  const [simulados, setSimulados] = useState<Simulado[]>([]);
+
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/simulados")
+      .then((res) => setSimulados(res.data))
+      .catch((err) => console.error("Erro ao buscar simulados:", err));
+  }, []);
 
   return (
     <>
@@ -30,7 +69,7 @@ export default function Simulados() {
 
           <div className="simulados-grid">
             {simulados.map((simulado) => (
-              <Link key={simulado.id} href={`/simulados/simulado?id=${simulado.id}`} legacyBehavior>
+              <Link key={simulado.id} href={`/simulados/${simulado.id}`} legacyBehavior>
                 <a className="simulado-card">
                   <h2>{simulado.titulo}</h2>
                   <p>{simulado.descricao}</p>
@@ -40,6 +79,7 @@ export default function Simulados() {
           </div>
         </div>
       </main>
+
       <style global jsx>{`
         body {
           background-color: #000 !important;
@@ -51,12 +91,6 @@ export default function Simulados() {
       `}</style>
 
       <style jsx>{`
-        body {
-          background-color: #000;
-          color: #fff;
-          font-family: Arial, sans-serif;
-        }
-
         .navbar {
           position: fixed;
           top: 0;
@@ -101,7 +135,7 @@ export default function Simulados() {
           text-align: center;
         }
 
-                .caixa h1 {
+        .caixa h1 {
           font-size: 36px;
           background: linear-gradient(to right, #6a1b9a, #bb86fc);
           -webkit-background-clip: text;
@@ -110,7 +144,6 @@ export default function Simulados() {
           margin-bottom: 10px;
           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
-
 
         .caixa p {
           font-size: 16px;

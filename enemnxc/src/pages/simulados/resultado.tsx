@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 interface Resultado {
-  idSimulado: string;
+  idSimulado: string | string[] | undefined;
   total: number;
   acertos: number;
   erros: number;
@@ -13,20 +13,19 @@ interface Resultado {
 
 export default function ResultadoSimulado() {
   const router = useRouter();
-  const { id } = router.query;
   const [resultado, setResultado] = useState<Resultado | null>(null);
 
   useEffect(() => {
-    const resultadoSalvo = localStorage.getItem("resultadoSimulado");
-    if (resultadoSalvo) {
-      setResultado(JSON.parse(resultadoSalvo));
+    const dados = localStorage.getItem("resultadoSimulado");
+    if (dados) {
+      setResultado(JSON.parse(dados));
     }
   }, []);
 
   return (
     <>
       <Head>
-        <title>Resultado - Simulado {id}</title>
+        <title>ENEMNXC - Resultado</title>
       </Head>
 
       <div className="navbar">
@@ -40,32 +39,23 @@ export default function ResultadoSimulado() {
 
       <main className="container">
         <div className="caixa">
-          <h1>📊 Resultado do Simulado {id}</h1>
-
+          <h1>📊 Resultado do Simulado</h1>
           {resultado ? (
-            <div className="resultado">
+            <div className="dados">
+              <p><strong>Simulado:</strong> {resultado.idSimulado}</p>
               <p><strong>Total de questões:</strong> {resultado.total}</p>
               <p><strong>Acertos:</strong> ✅ {resultado.acertos}</p>
               <p><strong>Erros:</strong> ❌ {resultado.erros}</p>
-              <p><strong>Desempenho:</strong> {resultado.percentual}%</p>
+              <p><strong>Aproveitamento:</strong> {resultado.percentual}%</p>
             </div>
           ) : (
-            <p>Carregando resultado...</p>
+            <p>Nenhum resultado encontrado.</p>
           )}
-
-          <Link href="/simulados" legacyBehavior>
-            <a className="botao">Voltar aos Simulados</a>
-          </Link>
+          <button onClick={() => router.push("/simulados")} className="botao">Voltar para Simulados</button>
         </div>
       </main>
 
       <style jsx>{`
-        body {
-          background-color: #000;
-          color: #fff;
-          font-family: Arial, sans-serif;
-        }
-
         .navbar {
           position: fixed;
           top: 0;
@@ -93,7 +83,7 @@ export default function ResultadoSimulado() {
 
         .container {
           padding-top: 80px;
-          max-width: 1000px;
+          max-width: 800px;
           margin: auto;
           display: flex;
           justify-content: center;
@@ -109,15 +99,15 @@ export default function ResultadoSimulado() {
           text-align: center;
         }
 
-        .caixa h1 {
+        h1 {
           font-size: 32px;
           color: #4a148c;
-          margin-bottom: 30px;
+          margin-bottom: 20px;
         }
 
-        .resultado p {
+        .dados p {
           font-size: 18px;
-          margin-bottom: 10px;
+          margin: 10px 0;
         }
 
         .botao {
@@ -128,12 +118,21 @@ export default function ResultadoSimulado() {
           font-size: 16px;
           border: none;
           border-radius: 8px;
-          text-decoration: none;
-          display: inline-block;
+          cursor: pointer;
         }
 
         .botao:hover {
           background-color: #7b1fa2;
+        }
+      `}</style>
+
+      <style global jsx>{`
+        body {
+          background-color: #000;
+          color: #fff;
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
         }
       `}</style>
     </>

@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
+import { GetServerSideProps } from "next";
+import nookies from "nookies";
+
 
 interface Alternativa {
   letra: string;
@@ -15,7 +18,18 @@ interface Questao {
   assunto: string;
   alternativas: Alternativa[];
 }
-
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { token } = nookies.get(ctx);
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+  return { props: {} };
+};
 export default function SimuladoPage() {
   const router = useRouter();
   const { id } = router.query;

@@ -120,7 +120,7 @@ export default function Home() {
                 <img src={dep.foto} alt={dep.nome} className="fotoDepoente" />
                 <h3>{dep.nome}</h3>
                 <p className="curso">{dep.curso}</p>
-                <p className="textoDepoimento">"{dep.texto}"</p>
+                <p className="textoDepoimento">{dep.texto}</p>
               </div>
             ))}
           </Slider>

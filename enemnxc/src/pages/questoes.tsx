@@ -2,10 +2,9 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import { GetServerSideProps } from 'next';    
-import nookies from 'nookies';    
-import { GetServerSideProps } from 'next';
 import nookies from 'nookies';
 
+// ✅ Apenas UMA função getServerSideProps
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { token } = nookies.get(ctx);
   if (!token) {
@@ -19,6 +18,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   return { props: {} };
 };
+
 const blocos: Record<string, string[]> = {
   "Linguagens, Códigos e suas Tecnologias": [
     "Língua Portuguesa",
@@ -36,22 +36,6 @@ const blocos: Record<string, string[]> = {
   ],
   "Ciências da Natureza e suas Tecnologias": ["Biologia", "Química", "Física"],
   "Matemática e suas Tecnologias": ["Matemática"],
-};
-
-// 👇 COLOQUE ESSA PARTE FORA DO COMPONENTE
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const cookies = nookies.get(ctx);
-
-  if (!cookies.token) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
-
-  return { props: {} };
 };
 
 export default function Questoes() {
@@ -142,7 +126,132 @@ export default function Questoes() {
         }
       `}</style>
 
-      {/* estilo omitido por espaço, pode manter igual */}
+      <style jsx>{`
+        .navbar {
+          position: fixed;
+          top: 0;
+          width: 100%;
+          background: #222;
+          padding: 12px 0;
+          display: flex;
+          justify-content: space-around;
+          border-bottom: 1px solid #444;
+          font-size: 14px;
+          z-index: 1000;
+        }
+
+        .navbar a {
+          text-decoration: none;
+          color: #bbb;
+          padding: 5px 10px;
+        }
+
+        .navbar a.active,
+        .navbar a:hover {
+          color: #bb86fc;
+          font-weight: bold;
+        }
+
+        .container {
+          display: flex;
+          margin-top: 60px;
+          height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+          width: 300px;
+          background-color: #111;
+          padding: 20px;
+          border-right: 1px solid #333;
+          overflow-y: auto;
+        }
+
+        .sidebar h3,
+        .sidebar h4 {
+          color: #bb86fc;
+          margin-top: 0;
+        }
+
+        .sidebar ul {
+          list-style: none;
+          padding: 0;
+        }
+
+        .sidebar li {
+          padding: 8px;
+          margin: 6px 0;
+          background-color: #222;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+
+        .sidebar li:hover {
+          background-color: #333;
+        }
+
+        .sidebar li.selected {
+          background-color: #bb86fc;
+          color: #000;
+          font-weight: bold;
+        }
+
+        .conteudo {
+          flex: 1;
+          padding: 40px;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+        }
+
+        .caixa {
+          background-color: #fff;
+          color: #000;
+          padding: 40px;
+          border-radius: 16px;
+          box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+          max-width: 700px;
+          text-align: center;
+        }
+
+       caixa h1 {
+          color: #4a148c;
+          margin-bottom: 20px;
+        }
+
+        .caixa p {
+          font-size: 16px;
+          margin-top: 10px;
+        }
+
+        label {
+          font-size: 14px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        input[type="checkbox"] {
+          accent-color: #bb86fc;
+          transform: scale(1.2);
+        }
+
+        @media (max-width: 768px) {
+          .container {
+            flex-direction: column;
+          }
+
+          .sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #333;
+          }
+
+          .conteudo {
+            padding: 20px;
+          }
+        }
+      `}</style>
     </>
   );
 }

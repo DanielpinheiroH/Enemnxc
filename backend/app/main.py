@@ -1,13 +1,11 @@
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from models import SessionLocal, Questao
+from app.models import SessionLocal, Questao
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-from routers import simulados
-# Corrigir importações
-from routers import historico, auth, questao, simulados
+from app.routers import historico, auth, questao, simulados
 
 # Carregar variáveis de ambiente
 load_dotenv()

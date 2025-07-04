@@ -1,13 +1,29 @@
 import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { GetServerSideProps } from "next";
+import nookies from "nookies"
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { token } = nookies.get(ctx);
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: {} };
+};
 
 const temas = [
-  "A importância da empatia nas relações virtuais",
-  "Os desafios da educação ambiental no Brasil",
-  "A influência das redes sociais na formação da identidade",
+  "Os desafios da educação inclusiva no Brasil",
+  "O impacto das redes sociasis na formação da identidade",
   "A persistência da violência contra a mulher na sociedade brasileira",
-  "O papel da tecnologia na inclusão de pessoas com deficiência"
+  "Caminhos para combater o etarismo no mercado de trabalho",
+  "A precarização do trabalho na era digital",
 ];
 
 export default function RedacoesPage() {
